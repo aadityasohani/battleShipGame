@@ -8,10 +8,12 @@ class PlayGameScene extends Phaser.Scene {
         this.load.image('jet', 'assets/images/jet.png');
         this.load.image('bomb', 'assets/images/bomb.png');
         this.load.image('ammo', 'assets/images/ammo.png');
-        this.load.image('coin', 'assets/images/coin.png')
-        this.load.audio('gun-shot', 'assets/audio/gunshot.wav')
-        this.load.audio('coinhit', 'assets/audio/coinhit.wav')
-        this.load.audio('endgame', 'assets/audio/end.mp3')
+        this.load.image('coin', 'assets/images/coin.png');
+        this.load.image('left', 'assets/images/arrow-left.png');
+        this.load.image('right', 'assets/images/arrow-right.png');
+        this.load.audio('gun-shot', 'assets/audio/gunshot.wav');
+        this.load.audio('coinhit', 'assets/audio/coinhit.wav');
+        this.load.audio('endgame', 'assets/audio/end.mp3');
         this.load.spritesheet('explosion', 'assets/spritesheets/explosion.png', {
             frameWidth: 16,
             frameHeight: 16
@@ -22,6 +24,16 @@ class PlayGameScene extends Phaser.Scene {
         this.sky = this.add.image(400, 300, 'sky');
         this.jet = this.physics.add.image(400, 500, 'jet').setScale(0.15).setOrigin(0.5, 0)
         this.jet.setCollideWorldBounds(true)
+
+        this.right=this.add.image(650,500,'right').setScale(0.5);
+        this.left=this.add.image(90,500,'left').setScale(0.23);
+
+        this.left.setInteractive();
+        this.left.on('pointerdown', this.vLeft, this)
+        this.right.setInteractive();
+        this.right.on('pointerdown', this.vRight, this)
+
+
 
         this.cursors = this.input.keyboard.createCursorKeys();
         this.input.on('pointerdown', this.shoot, this)
@@ -61,6 +73,12 @@ class PlayGameScene extends Phaser.Scene {
 
         this.scoreText = this.add.text(15, 15, 'Score : 0', { fontSize: 32, fill: '#ff0000' })
 
+    }
+    vLeft(jet){
+        this.jet.setVelocityX(-450);
+    }
+    vRight(jet){
+        this.jet.setVelocityX(450);
     }
     endGame() {
         this.endgame.play()
@@ -123,7 +141,7 @@ class PlayGameScene extends Phaser.Scene {
         } else if (this.cursors.right.isDown) {
             this.jet.setVelocityX(150);
         } else {
-            this.jet.setVelocityX(0);
+                this.jet.setVelocityX(0);
         }
 
         if (this.cursors.up.isDown) {
@@ -137,6 +155,8 @@ class PlayGameScene extends Phaser.Scene {
         this.checkForRepos(this.bombs)
         this.checkForRepos(this.coins)
     }
+
+     
     checkForRepos(bombs) {
         let game = this;
         bombs.children.iterate(function (bomb) {
